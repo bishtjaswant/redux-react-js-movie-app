@@ -1,17 +1,16 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { configureStore } from '@reduxjs/toolkit'
+// Or from '@reduxjs/toolkit/query/react'
+import { setupListeners } from '@reduxjs/toolkit/query'
+import { movieApi } from './../features/movies/movieSlide';
+ import searchReducer from '../features/search/searchSlice';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
-  },
-});
+      [movieApi.reducerPath]: movieApi.reducer,
+      search:searchReducer
+  }, 
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(movieApi.middleware),
+}); 
 
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
+setupListeners(store.dispatch)
